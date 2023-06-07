@@ -1,5 +1,4 @@
 const ProductService = require('../services/product-service');
-const CustomerService = require('../services/customer-service');
 const UserAuth = require('./middlewares/auth')
 
 module.exports = (app) => {
