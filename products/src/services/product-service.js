@@ -75,6 +75,22 @@ class ProductService {
         }
     }
      
+    async GetProductPayload(userId, { productId, qty }, event) {
+        try {
+            const product = await this.GetProductById(productId);
+            if (product) {
+                const payload = {
+                    event: event,
+                    data: {userId, product, qty}
+                }
+                return formateData(payload);
+            } else {
+                return formatData({error: 'Product not found'});
+            }
+        } catch (error) {
+            throw new APIError('Data Not found')
+        }
+    }
 }
 
 module.exports = ProductService;
