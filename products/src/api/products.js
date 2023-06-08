@@ -66,11 +66,10 @@ module.exports = (app) => {
 
         const { _id } = req.user;
         
-        //get payload // to send to customer service
-        const {data} = await service.GetProductPayload(_id, { productId: req.body._id }, 'Add_To_Wishlist');
-        
+        //get payload // to send to customer service        
 
         try {
+            const {data} = await service.GetProductPayload(_id, { productId: req.body._id }, 'Add_To_Wishlist');
             PublishCustomerEvent(data);
             
             return res.status(200).json(data.data.product);
@@ -85,9 +84,11 @@ module.exports = (app) => {
         const productId = req.params.id;
 
         try {
-            const product = await service.GetProductById(productId);
-            const wishlist = await customerService.AddToWishlist(_id, product)
-            return res.status(200).json(wishlist);
+            const {data} = await service.GetProductPayload(_id, { productId }, 'Remove_From_Wishlist');
+            
+            PublishCustomerEvent(data);
+
+            return res.status(200).json(data.data.product);
         } catch (err) {
             next(err)
         }
@@ -96,13 +97,19 @@ module.exports = (app) => {
 
     app.put('/cart',UserAuth, async (req,res,next) => {
         
-        const { _id, qty } = req.body;
+        const { _id } = req.user;
         
         try {     
-            const product = await service.GetProductById(_id);
-    
-            const result =  await customerService.ManageCart(req.user._id, product, qty, false);
-    
+            const {data} = await service.GetProductPayload(_id, { productId: req.body._id, qty: req.body.qty }, 'Add_To_Cart');
+            
+            PublishCustomerEvent(data)
+            PublishShoppingEvent(data);
+
+            const result = {
+                product: data.data.product,
+                unit: data.data.qty
+            }
+
             return res.status(200).json(result);
             
         } catch (err) {
@@ -115,8 +122,15 @@ module.exports = (app) => {
         const { _id } = req.user;
 
         try {
-            const product = await service.GetProductById(req.params.id);
-            const result = await customerService.ManageCart(_id, product, 0 , true);             
+            const {data} = await service.GetProductPayload(_id, { productId: req.params.id }, 'Remove_From_Cart');
+                         
+            PublishCustomerEvent(data)
+            PublishShoppingEvent(data);
+
+            const result = {
+                product: data.data.product,
+                unit: data.data.qty
+            }
             return res.status(200).json(result);
         } catch (err) {
             next(err)
