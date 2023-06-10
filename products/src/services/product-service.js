@@ -83,11 +83,13 @@ class ProductService {
                     event: event,
                     data: {userId, product, qty}
                 }
-                return formateData(payload);
+                console.log(payload)
+                return FormateData(payload);
             } else {
-                return formatData({error: 'Product not found'});
+                return FormateData({error: 'Product not found'});
             }
         } catch (error) {
+            console.log('error happened and i don\'t know why');
             throw new APIError('Data Not found')
         }
     }

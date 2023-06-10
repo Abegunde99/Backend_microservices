@@ -7,7 +7,7 @@ module.exports = (app) => {
         const { payload } = req.body;
         service.SubscribeEvents(payload);
 
-        console.log("************** Shopping Service received event **************");
+        console.log("************** customer Service received event **************");
         return res.status(200).json(payload);
     });
  };

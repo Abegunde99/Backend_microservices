@@ -112,6 +112,7 @@ class CustomerRepository {
       );
 
       if (profile) {
+        console.log('got here')
         let wishlist = profile.wishlist;
 
         if (wishlist.length > 0) {
@@ -135,7 +136,7 @@ class CustomerRepository {
       }
 
       const profileResult = await profile.save();
-
+      console.log(profileResult)
       return profileResult.wishlist;
     } catch (err) {
       throw new APIError(

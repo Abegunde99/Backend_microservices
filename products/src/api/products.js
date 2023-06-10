@@ -69,12 +69,12 @@ module.exports = (app) => {
         //get payload // to send to customer service        
 
         try {
-            const {data} = await service.GetProductPayload(_id, { productId: req.body._id }, 'Add_To_Wishlist');
+            const { data } = await service.GetProductPayload(_id, { productId: req.body._id }, 'Add_To_Wishlist');
             PublishCustomerEvent(data);
             
-            return res.status(200).json(data.data.product);
+            return res.status(200).json({success:true, data: data.data.product});
         } catch (err) {
-            
+            throw err;
         }
     });
     
