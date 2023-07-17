@@ -83,7 +83,6 @@ class ProductService {
                     event: event,
                     data: {userId, product, qty}
                 }
-                console.log(payload)
                 return FormateData(payload);
             } else {
                 return FormateData({error: 'Product not found'});

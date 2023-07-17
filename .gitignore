@@ -2,4 +2,5 @@
 /products/node_modules
 /shopping/node_modules
 /gateway/node_modules
-```
+
+.env

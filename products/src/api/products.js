@@ -1,8 +1,8 @@
 const ProductService = require('../services/product-service');
-const {PublishCustomerEvent, PublishShoppingEvent} = require('../utils')
+const {PublishMessage} = require('../utils')
 const UserAuth = require('./middlewares/auth')
 
-module.exports = (app) => {
+module.exports = (app, channel) => {
     
     const service = new ProductService();
 
