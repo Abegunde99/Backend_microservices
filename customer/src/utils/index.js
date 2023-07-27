@@ -1,7 +1,8 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const amqplib = require("amqplib");
 
-const { APP_SECRET } = require("../config");
+const { APP_SECRET , EXCHANGE_NAME, MESSAGE_BROKER_URL, QUEUE_NAME, CUSTOMER_BINDING_KEY} = require("../config");
 
 //Utility functions
 module.exports.GenerateSalt = async () => {
@@ -49,4 +50,37 @@ module.exports.FormateData = (data) => {
   } else {
     throw new Error("Data Not found!");
   }
+};
+
+//message broker
+
+//create channel
+module.exports.CreateChannel = async (connection) => {
+  try {
+    const connection = await amqplib.connect(MESSAGE_BROKER_URL);
+    const channel = await connection.createChannel();
+    await channel.assertExchange(EXCHANGE_NAME, 'direct', false);
+    return channel;
+  } catch (error) {
+    throw error;
+  }
+
+};
+
+
+//subscribe message
+module.exports.SubscribeMessage = async (channel, service) => { 
+  const appQueue = await channel.assertQueue(QUEUE_NAME);
+
+  await channel.bindQueue(appQueue.queue, EXCHANGE_NAME, CUSTOMER_BINDING_KEY);
+
+  await channel.consume(appQueue.queue, async (message) => {
+    const { event, data } = JSON.parse(message.content.toString());
+    console.log('received data in customer service')
+    console.log(event);
+    console.log(data);
+    // await service.SubscribeEvents({ event, data });
+
+    await channel.ack(message);
+  });
 };

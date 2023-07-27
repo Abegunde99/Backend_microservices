@@ -1,8 +1,8 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const axios = require("axios");
+const amqplib = require("amqplib");
 
-const { APP_SECRET } = require("../config");
+const { APP_SECRET , EXCHANGE_NAME, MESSAGE_BROKER_URL, QUEUE_NAME, SHOPPING_BINDING_KEY} = require("../config");
 
 //Utility functions
 module.exports.GenerateSalt = async () => {
@@ -51,8 +51,44 @@ module.exports.FormateData = (data) => {
   }
 };
 
-module.exports.PublishCustomerEvent = async(payload) =>{
-  //perform some operations
-  axios.post('http://localhost:3003/customer/app-events', { payload })
-}
+//message broker
 
+//create channel
+module.exports.CreateChannel = async (connection) => {
+  try {
+    const connection = await amqplib.connect(MESSAGE_BROKER_URL);
+    const channel = await connection.createChannel();
+    await channel.assertExchange(EXCHANGE_NAME, 'direct', false);
+    return channel;
+  } catch (error) {
+    throw error;
+  }
+
+};
+
+//publish message
+module.exports.PublishMessage = async (channel, binding_key, message) => { 
+  try {
+    await channel.publish(EXCHANGE_NAME, binding_key, Buffer.from(message));
+    console.log('message has been sent from shopping service' + message)
+  } catch (error) {
+    throw error;
+  }
+};
+
+//subscribe message
+module.exports.SubscribeMessage = async (channel, service) => { 
+  const appQueue = await channel.assertQueue(QUEUE_NAME);
+
+  await channel.bindQueue(appQueue.queue, EXCHANGE_NAME, SHOPPING_BINDING_KEY);
+
+  await channel.consume(appQueue.queue, async (message) => {
+    const { event, data } = JSON.parse(message.content.toString());
+    console.log('received data to shopping service')
+    console.log(event);
+    console.log(data);
+    // await service.SubscribeEvents({ event, data });
+
+    await channel.ack(message);
+  });
+};
