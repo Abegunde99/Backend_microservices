@@ -70,7 +70,7 @@ module.exports = (app, channel) => {
         //get payload // to send to customer service        
 
         try {
-            const { data } = await service.GetProductPayload(_id, { productId: req.body._id }, 'Add_To_Wishlist');
+            const { data } = await service.GetProductPayload(_id, { productId: req.body._id }, 'ADD_TO_WISHLIST');
             // PublishCustomerEvent(data);
             PublishMessage(channel, CUSTOMER_BINDING_KEY, JSON.stringify(data));
             
@@ -86,7 +86,7 @@ module.exports = (app, channel) => {
         const productId = req.params.id;
 
         try {
-            const {data} = await service.GetProductPayload(_id, { productId }, 'Remove_From_Wishlist');
+            const {data} = await service.GetProductPayload(_id, { productId }, 'REMOVE_FROM_WISHLIST');
             
             // PublishCustomerEvent(data);
             PublishMessage(channel, CUSTOMER_BINDING_KEY, JSON.stringify(data));
@@ -103,7 +103,7 @@ module.exports = (app, channel) => {
         const { _id } = req.user;
         
         try {     
-            const {data} = await service.GetProductPayload(_id, { productId: req.body._id, qty: req.body.qty }, 'Add_To_Cart');
+            const {data} = await service.GetProductPayload(_id, { productId: req.body._id, qty: req.body.qty }, 'ADD_TO_CART');
             
             // PublishCustomerEvent(data)
             PublishMessage(channel, CUSTOMER_BINDING_KEY, JSON.stringify(data));
@@ -127,7 +127,7 @@ module.exports = (app, channel) => {
         const { _id } = req.user;
 
         try {
-            const {data} = await service.GetProductPayload(_id, { productId: req.params.id }, 'Remove_From_Cart');
+            const {data} = await service.GetProductPayload(_id, { productId: req.params.id }, 'REMOVE_FROM_CART');
                          
             // PublishCustomerEvent(data)
             PublishMessage(channel, CUSTOMER_BINDING_KEY, JSON.stringify(data));

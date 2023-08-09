@@ -41,14 +41,16 @@ class ShoppingService {
 
   async ManageCart(customerId, item, qty, isRemove) {
     try {
-      const cartItem = await this.repository.ManageCart(customerId, item, qty, isRemove);
-      return formateData(cartItem);
+      console.log("got here");
+      const cartItem = await this.repository.AddCartItem(customerId, item, qty, isRemove);
+      console.log("cartResult", cartItem);
+      return FormateData(cartItem);
     } catch (error) {
       throw error;
     }
   }
 
-  async SubscribeEvents(payload){
+  async SubscribeEvents(payload) {
     const { event, data } =  payload;
 
     const { userId, product, qty } = data;
@@ -72,9 +74,9 @@ class ShoppingService {
                 event: event,
                 data: {userId, order}
             }
-            return formateData(payload);
+            return FormateData(payload);
         } else {
-            return formatData({error: 'no Order is available '});
+            return FormateData({error: 'no Order is available '});
         }
     } catch (error) {
         throw new APIError('Data Not found')

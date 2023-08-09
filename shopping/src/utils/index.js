@@ -84,10 +84,8 @@ module.exports.SubscribeMessage = async (channel, service) => {
 
   await channel.consume(appQueue.queue, async (message) => {
     const { event, data } = JSON.parse(message.content.toString());
-    console.log('received data to shopping service')
-    console.log(event);
-    console.log(data);
-    // await service.SubscribeEvents({ event, data });
+    console.log('received data to shopping service', SHOPPING_BINDING_KEY)
+    await service.SubscribeEvents({ event, data });
 
     await channel.ack(message);
   });

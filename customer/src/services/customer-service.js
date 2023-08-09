@@ -112,7 +112,7 @@ class CustomerService {
 
     async AddToWishlist(customerId, product){
         try {
-            const wishlistResult = await this.repository.AddWishlistItem(customerId, product);        
+            const wishlistResult = await this.repository.AddWishlistItem(customerId, product);
            return FormateData(wishlistResult);
     
         } catch (err) {
@@ -122,7 +122,9 @@ class CustomerService {
 
     async ManageCart(customerId, product, qty, isRemove){
         try {
-            const cartResult = await this.repository.AddCartItem(customerId, product, qty, isRemove);        
+            console.log('got here')
+            const cartResult = await this.repository.AddCartItem(customerId, product, qty, isRemove); 
+            console.log('cartResult', cartResult)
             return FormateData(cartResult);
         } catch (err) {
             throw new APIError('Data Not found', err)
@@ -139,7 +141,6 @@ class CustomerService {
     }
 
     async SubscribeEvents(payload){
-        console.log('SubscribeEvents', payload);
         const { event, data } =  payload;
 
         const { userId, product, order, qty } = data;

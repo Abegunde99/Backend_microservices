@@ -62,7 +62,8 @@ class ShoppingRepository {
                 const cartResult = await cart.save();
 
                 return cartResult;
-            }else{
+            } else {
+                console.log('here', item, qty)
                 return await CartModel.create({customerId, items: [{product: {...item}, unit: qty}]})
             }
     
